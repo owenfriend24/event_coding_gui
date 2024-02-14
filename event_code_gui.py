@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Text, Button, filedialog, messagebox
+import csv
 
 class TextCategorizerApp:
     def __init__(self, root):
@@ -15,7 +16,7 @@ class TextCategorizerApp:
         instruction_label.pack(pady=5, padx = 1, anchor="w", side="top", fill="x") 
         
         # create text box for transcribed recall to be pasted into
-        self.text_area = Text(self.root, wrap="word", height=40, width=110)
+        self.text_area = Text(self.root, wrap="word", height=40, width=110,undo = True)
         self.text_area.pack(padx=10, pady=10, side="left")
 
         # categories - make sure name's align with colors assigned below in get_category_color
@@ -70,6 +71,9 @@ class TextCategorizerApp:
             if existing_category:
                 self.text_area.tag_remove(existing_category, start, end)
                 del self.category_assignments[selected_text]
+            else: 
+                messagebox.showerror("Error clearing tag", "An existing tag was not found for the selected text. Make sure you've selected all the text for this tag (including whitespace) and try again. ")
+
 
     # Assign unique hex colors for each category; aim to use pretty light colors so you can still read the text when it's highlighted. For more categories, can also add colors to actual text rather than highlighting
     def get_category_color(self, category):
@@ -81,16 +85,17 @@ class TextCategorizerApp:
         filename = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
         if filename:
             with open(filename, "w") as file:
-                file.write("Word/Phrase,Category\n")
+                wr = csv.writer(file)
+                wr.writerow(['Word/Phrase','Category'])
                 for word, category in self.category_assignments.items():
-                    file.write(f"{word},{category}\n")
+                    wr.writerow([str(word),str(category)])
 
                 # after saving out text with categories, iterate through entire text to save each string within curly brackets as a separate entry
                 text_content = self.text_area.get("1.0", tk.END)
                 nested_texts = self.extract_nested_texts(text_content)
                 for nested_text in nested_texts:
-                    file.write(f"{nested_text},nested\n")
-
+                    wr.writerow([str(nested_text),'nested'])
+            file.close()
             messagebox.showinfo("Success", "CSV file saved successfully!")
             
             # clears text box for next transcript so that GUI can stay open/doesn't have to be re-loaded for each transcript
