@@ -94,7 +94,7 @@ class TextCategorizerApp:
                 text_content = self.text_area.get("1.0", tk.END)
                 nested_texts = self.extract_nested_texts(text_content)
                 for nested_text in nested_texts:
-                    wr.writerow([str(nested_text),'non-recall'])
+                    wr.writerow([str(nested_text),'nested'])
             file.close()
             messagebox.showinfo("Success", "CSV file saved successfully!")
             
