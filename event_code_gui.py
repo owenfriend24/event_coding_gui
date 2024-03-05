@@ -116,6 +116,7 @@ class TextCategorizerApp:
     # 
     def clear_text_area(self):
         self.text_area.delete("1.0", tk.END)
+        self.category_assignments = {}
 
 
 if __name__ == "__main__":
