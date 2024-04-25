@@ -21,7 +21,7 @@ class TextCategorizerApp:
         self.text_area.pack(padx=10, pady=10, side="left")
 
         # categories - make sure name's align with colors assigned below in get_category_color
-        self.categories = ["Event", "Place", "Time", "Perceptual", "Emotion/Thought", "Conditional"]
+        self.categories = ["Event", "Place", "Time", "Perceptual", "Emotion/Thought", "Repetitions"]
         
         # create category buttons
         category_frame = tk.Frame(self.root)
@@ -78,8 +78,7 @@ class TextCategorizerApp:
 
     # Assign unique hex colors for each category; aim to use pretty light colors so you can still read the text when it's highlighted. For more categories, can also add colors to actual text rather than highlighting
     def get_category_color(self, category):
-        #colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd", "Conditional":"#ffc869"}
-        colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd"}
+        colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd", "Repetition":"#ff7b7b"}
         return colors.get(category, "#FFFFFF")  # Default to white if category not found
     
     # save file to csv, with one column for selected text, and one column for corresponding category label
