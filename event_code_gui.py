@@ -12,7 +12,8 @@ class TextCategorizerApp:
         # add instructions text to top of GUI
         instruction_title = tk.Label(self.root, text="INSTRUCTIONS:")
         instruction_title.pack(pady=5, padx = 5, anchor="w", side="top", fill="x") 
-        instruction_label = tk.Label(self.root, text="Copy transcribed text into the box below. Highlight words or phrases and click a category button to assign to that category.\nCategories are mutually exclusive. To change a categorized word/phrase to another category, highlight the word/phrase and then click the new category.\nTo remove a category label from a word/phrase, highlight the word/phrase and click \'Clear\'.\nTo denote temporally nested events, use curly brackets around relevant words/phrases (e.g. \'{I get ready, so I brush my teeth and wash my face}\').\nWhen finished, click \'Save\' to output csv file with all word/phrases and their corresponding category codes. The input box will then clear and can be used again.", justify="left")
+        instruction_label = tk.Label(self.root, text="Copy transcribed text into the box below. Highlight words or phrases and click a category button to assign to that category.\nCategories are mutually exclusive. To change a categorized word/phrase to another category, highlight the word/phrase and then click the new category.\nTo remove a category label from a word/phrase, highlight the word/phrase and click \'Clear\'. \nWhen finished, click \'Save\' to output csv file with all word/phrases and their corresponding category codes. The input box will then clear and can be used again.", justify="left")
+        # \nTo denote temporally nested events, use curly brackets around relevant words/phrases (e.g. \'{I get ready, so I brush my teeth and wash my face}\').
         instruction_label.pack(pady=5, padx = 1, anchor="w", side="top", fill="x") 
         
         # create text box for transcribed recall to be pasted into
@@ -77,7 +78,8 @@ class TextCategorizerApp:
 
     # Assign unique hex colors for each category; aim to use pretty light colors so you can still read the text when it's highlighted. For more categories, can also add colors to actual text rather than highlighting
     def get_category_color(self, category):
-        colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd", "Conditional":"#ffc869"}
+        #colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd", "Conditional":"#ffc869"}
+        colors = {"Event": "#f6fa82", "Place": "#b7ff87", "Time": "#bdd2ff", "Perceptual":"#ffc7f8", "Emotion/Thought":"#bdbdbd"}
         return colors.get(category, "#FFFFFF")  # Default to white if category not found
     
     # save file to csv, with one column for selected text, and one column for corresponding category label
