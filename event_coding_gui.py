@@ -7,7 +7,7 @@ class TextCategorizerApp:
         self.root = root
         
         # name GUI
-        self.root.title("Transcript Event Coding GUI v1")
+        self.root.title("Transcript Event Coding GUI v1-2")
         
         # add instructions text to top of GUI
         instruction_title = tk.Label(self.root, text="INSTRUCTIONS:")
