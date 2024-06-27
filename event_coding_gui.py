@@ -17,7 +17,7 @@ class TextCategorizerApp:
         instruction_label.pack(pady=5, padx = 1, anchor="w", side="top", fill="x") 
         
         # create text box for transcribed recall to be pasted into
-        self.text_area = Text(self.root, wrap="word", height=40, width=110,undo = True)
+        self.text_area = Text(self.root, wrap="word", height=40, width=110, undo=True)
         self.text_area.pack(padx=10, pady=10, side="left")
 
         # categories - make sure name's align with colors assigned below in get_category_color
@@ -39,13 +39,17 @@ class TextCategorizerApp:
         button_frame = tk.Frame(self.root)
         button_frame.pack(side="left", padx=5)
         clear_btn = Button(button_frame, text="Clear", command=self.clear_category)
-        clear_btn.pack(side = "left", pady=10)
+        clear_btn.pack(side="left", pady=10)
+
+        # add button to clear the text area
+        clear_screen_btn = Button(button_frame, text="Clear Screen", command=self.clear_text_area)
+        clear_screen_btn.pack(side="left", padx=5, pady=10)
         
         # add button to save file as csv
         submit_btn = Button(self.root, text="SAVE", command=self.save_to_csv)
-        submit_btn.pack(side = "top", padx=1)
+        submit_btn.pack(side="top", padx=1)
 
-        self.category_assignments = {}
+        self.category_assignments = []
 
     # assigns selected word/phrase to category
     def assign_category(self, category):
@@ -54,11 +58,11 @@ class TextCategorizerApp:
             start, end = selected_indices
             selected_text = self.text_area.get(start, end)
 
-            existing_category = self.category_assignments.get(selected_text)
-            if existing_category:
-                self.text_area.tag_remove(existing_category, start, end)
+            # Remove any existing category tags in this range
+            for tag in self.text_area.tag_names(start):
+                self.text_area.tag_remove(tag, start, end)
 
-            self.category_assignments[selected_text] = category
+            self.category_assignments.append((selected_text, start, end, category))
             self.text_area.tag_add(category, start, end)
             self.text_area.tag_config(category, background=self.get_category_color(category))
 
@@ -69,13 +73,12 @@ class TextCategorizerApp:
             start, end = selected_indices
             selected_text = self.text_area.get(start, end)
 
-            existing_category = self.category_assignments.get(selected_text)
-            if existing_category:
-                self.text_area.tag_remove(existing_category, start, end)
-                del self.category_assignments[selected_text]
-            else: 
-                messagebox.showerror("Error clearing tag", "An existing tag was not found for the selected text. Make sure you've selected all the text for this tag (including whitespace) and try again. ")
+            # Remove the tag from the text area
+            for tag in self.text_area.tag_names(start):
+                self.text_area.tag_remove(tag, start, end)
 
+            # Remove from category_assignments
+            self.category_assignments = [item for item in self.category_assignments if not (item[0] == selected_text and item[1] == start and item[2] == end)]
 
     # Assign unique hex colors for each category; aim to use pretty light colors so you can still read the text when it's highlighted. For more categories, can also add colors to actual text rather than highlighting
     def get_category_color(self, category):
@@ -90,19 +93,16 @@ class TextCategorizerApp:
             with open(filename, "w") as file:
                 wr = csv.writer(file)
                 wr.writerow(['Word/Phrase','Category'])
-                for word, category in self.category_assignments.items():
-                    wr.writerow([str(word),str(category)])
+                for text, start, end, category in self.category_assignments:
+                    wr.writerow([text, category])
 
                 # after saving out text with categories, iterate through entire text to save each string within curly brackets as a separate entry
                 text_content = self.text_area.get("1.0", tk.END)
                 nested_texts = self.extract_nested_texts(text_content)
                 for nested_text in nested_texts:
-                    wr.writerow([str(nested_text),'nested'])
+                    wr.writerow([nested_text,'nested'])
             file.close()
             messagebox.showinfo("Success", "CSV file saved successfully!")
-            
-            # clears text box for next transcript so that GUI can stay open/doesn't have to be re-loaded for each transcript
-            self.clear_text_area()
 
     def extract_nested_texts(self, text):
         nested_texts = []
@@ -116,11 +116,10 @@ class TextCategorizerApp:
                 break
         return nested_texts
     
-    # 
+    # clears the text area and category assignments
     def clear_text_area(self):
         self.text_area.delete("1.0", tk.END)
-        self.category_assignments = {}
-
+        self.category_assignments = []
 
 if __name__ == "__main__":
     root = tk.Tk()
